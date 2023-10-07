@@ -6,6 +6,8 @@ win_hight = 600
 FPS = 60
 clock = time.Clock()
 speed = 5
+speed_x = 5
+speed_y = 5
 
 
 window = display.set_mode((win_wight, win_hight))
@@ -41,21 +43,48 @@ class Playear(GameSprite):
 
 player1 = Playear('b5cfe7f968df0ed5437b4eb5fbfbea3e.png', 100, 300, speed, 100,130) 
 player2 = Playear('b5cfe7f968df0ed5437b4eb5fbfbea3e.png', 800, 300, speed, 100,130)
-ball = GameSprite('Tennis-Ball-Transparent-Background.png', 500, 400,  speed, 100, 100) 
+ball = GameSprite('Tennis-Ball-Transparent-Background.png', 500, 400,  speed, 100, 100)
+
 run = True
 finish = False
+
+font.init()
+font1 = font.Font(None, 35)
+lose1 = font1.render('Player 1 Lose!', True, (0,0,0))
+lose2 = font1.render('Player 2 Lose!', True, (0,0,0))
+
 
 while run:
     for e in event.get():
         if e.type == QUIT:
             run = False
     window.blit(background,(0, 0))
+    if finish != True:
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
+
+    if ball.rect.y > win_hight - 100 or ball.rect.y < 0:
+        speed_y *= -1
+
+    if sprite.collide_rect(player1, ball) or sprite.collide_rect(player2, ball):
+        speed_x *= -1
+
+    if ball.rect.x < 0:
+        finish = True
+        window.blit(lose1, (420,100))
+
+    if ball.rect.x > win_wight - 100:
+        finish = True
+        window.blit(lose2, (420,100))
+
+    
 
     player1.update_l()
     player1.reset() 
     player2.update_r()
     player2.reset()
     ball.reset()
+
     clock.tick(FPS)
     display.update()   
 
